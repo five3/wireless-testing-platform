@@ -8,6 +8,7 @@ import os
 
 from CommonLib import callCommand
 
+import platform
 
 class DeviceUtils:
     processlock = '/sdcard/processlock.pid'
@@ -20,26 +21,44 @@ class DeviceUtils:
     """ 获取手机分辨率 """
     @staticmethod
     def getResolutionBySerial(serial):
-        resolution_cmd = 'adb -s %s shell dumpsys display | grep DisplayDeviceInfo' % serial
-        rlt = callCommand(resolution_cmd)[0].strip()
-        return rlt[rlt.find(':') + 1:rlt.find('}')].split(',')[0].strip()
+        if platform.system()=='Windows':
+            resolution_cmd = 'adb -s %s shell dumpsys display | find "DisplayDeviceInfo"' % serial
+        else:
+            resolution_cmd = 'adb -s %s shell dumpsys display | grep DisplayDeviceInfo' % serial
+        try:
+            rlt = callCommand(resolution_cmd)[0].strip()
+            return rlt[rlt.find(':') + 1:rlt.find('}')].split(',')[0].strip()
+        except:
+            return 'noDeviceInfo'
     
     """ 获取手机安卓版本信息 """
     @staticmethod
     def getEditionBySerial(serial):
-        return callCommand('adb -s %s shell getprop ro.build.version.release' % serial)[0].strip()
+        try:
+            return callCommand('adb -s %s shell getprop ro.build.version.release' % serial)[0].strip()
+        except:
+            return 'noEditionInfo'
     
     """ 获取手机内存信息，返回内存大小和可用内存大小 """
     @staticmethod
     def getMemoryParameterBySerial(serial):
-        memory_result = callCommand('adb -s %s shell df | grep data' % serial)[0].strip().split()
+        if platform.system()=='Windows':
+            memory_result = callCommand('adb -s %s shell df | find "data"' % serial)[0].strip().split()
+        else:
+            memory_result = callCommand('adb -s %s shell df | grep data' % serial)[0].strip().split()
         return memory_result[1], memory_result[3]
 
     """ 判断手机是否插入sim卡，主要根据imsi号进行判断 """
     @staticmethod
     def getSimStateBySerial(serial):
-        service_state = callCommand('adb -s %s shell dumpsys telephony.registry | grep mServiceState' % serial)[0].strip().split()[0].split('=')[1]
-        return int(service_state) == 1;
+        if platform.system()=='Windows':
+            service_state = callCommand('adb -s %s shell dumpsys telephony.registry | find "mServiceState"' % serial)[0].strip().split()[0].split('=')[1]
+        else:
+            service_state = callCommand('adb -s %s shell dumpsys telephony.registry | grep mServiceState' % serial)[0].strip().split()[0].split('=')[1]
+        try:
+            return int(service_state)==1
+        except:
+            return False
     
     """ 将手机中的文件保存至电脑中 """
     @staticmethod
@@ -65,7 +84,10 @@ class DeviceUtils:
     @staticmethod
     def isDeviceLocked(serial):
         processlock = DeviceUtils.processlock
-        return callCommand('adb -s %s shell ls %s | grep %s' % (serial, processlock[0:processlock.rindex('/') + 1], processlock[processlock.rindex('/') + 1:]))
+        if platform.system()=='Windows':
+            return callCommand('adb -s %s shell ls %s | find "%s"' % (serial, processlock[0:processlock.rindex('/') + 1], processlock[processlock.rindex('/') + 1:]))
+        else:
+            return callCommand('adb -s %s shell ls %s | grep %s' % (serial, processlock[0:processlock.rindex('/') + 1], processlock[processlock.rindex('/') + 1:]))
 
     """ 将本地文件夹传入手机中对应的文件夹，且按照本地文件夹的结构传入新文件夹 """
     @staticmethod
