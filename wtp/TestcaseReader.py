@@ -80,11 +80,12 @@ class TestcaseReader:
         if testcaseDict.has_key('condition') and testcaseDict['condition'].has_key('sim'):
             testcase.condition.sim = True if testcaseDict['condition']['sim'].lower() != 'false' else False
 
-        if type(testcaseDict['prepares']['prepare']) is list:
-            for prepare in testcaseDict['prepares']['prepare']:
-                testcase.prepares.extend(self.splitCommandLine(prepare))
-        else:
-            testcase.prepares.extend(self.splitCommandLine(testcaseDict['prepares']['prepare']))
+        if 'prepares' in testcaseDict:
+			if type(testcaseDict['prepares']['prepare']) is list:
+				for prepare in testcaseDict['prepares']['prepare']:
+					testcase.prepares.extend(self.splitCommandLine(prepare))
+			else:
+				testcase.prepares.extend(self.splitCommandLine(testcaseDict['prepares']['prepare']))
         
         return testcase
     
