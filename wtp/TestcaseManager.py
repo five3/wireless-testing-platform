@@ -67,7 +67,7 @@ class TestcaseManager:
                 
             for command in testcase.commands:
                 command = self._replaceMacro(command, deviceInfo, testcase);
-				sys.stderr.writelines(command)
+                sys.stderr.writelines(command)
                 last_echo = callCommand(command)
                 TestcaseResultDao().update(testcase.testcaseResult, last_echo)
                 
