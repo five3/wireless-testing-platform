@@ -9,7 +9,7 @@ import Queue
 import json
 import thread
 import time
-
+import sys
 from threadpool import makeRequests
 
 from CommonLib import callCommand
@@ -31,15 +31,26 @@ class TestcaseManager:
                 time.sleep(1)
                 continue
             
-            testcase = self.queue.get()
-            deviceInfo = DeviceManager().shiftDevice(testcase.condition)
-            if not deviceInfo:
-                self.queue.put(testcase)
-                
-                time.sleep(1)
+            testcase_list = []
+            for i in range(len(DeviceManager()._deviceInfoList.available_device_list)):  ###根据空闲设备数来控制并发量
+                if not self.queue.empty():
+                    testcase_list.append(self.queue.get())
+                else:    ##用例取完则退出
+                    break
+
+            req_list = []
+            for testcase in testcase_list:
+                deviceInfo = DeviceManager().shiftDevice(testcase.condition)
+                if not deviceInfo:     ##没有设备则用例送回队列
+                    self.queue.put(testcase)
+                    time.sleep(1)
+                    continue
+                req_list.append({'deviceInfo':deviceInfo, 'testcase':testcase})
+
+            if not req_list:
                 continue
-            
-            requests = makeRequests(self._runTestcase, [{'deviceInfo':deviceInfo, 'testcase':testcase}])
+
+            requests = makeRequests(self._runTestcase, req_list)
             [ThreadPoolManager().threadPool.putRequest(req) for req in requests]
             ThreadPoolManager().threadPool.wait()
     
@@ -75,11 +86,11 @@ class TestcaseManager:
             
             testcase.testcaseResult.isEnd = 1
             test_state = last_echo[-7:]
-            testcaseResult.run_time = test_state[1].strip().split(': ')[1]  ##获取执行时间
+            testcase.testcaseResult.run_time = test_state[1].strip().split(': ')[1]  ##获取执行时间
             if test_state[3].split()[0]=="OK":  ##判定是否通过
-                testcaseResult.isSuccess = 1
+                testcase.testcaseResult.isSuccess = 1
             else:
-                testcaseResult.isSuccess = 0
+                testcase.testcaseResult.isSuccess = 0
             TestcaseResultDao().update(testcase.testcaseResult)
         finally:
             DeviceManager().resetDevice(deviceInfo)
