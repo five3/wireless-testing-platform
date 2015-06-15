@@ -67,12 +67,19 @@ class TestcaseManager:
                 
             for command in testcase.commands:
                 command = self._replaceMacro(command, deviceInfo, testcase);
-                TestcaseResultDao().update(testcase.testcaseResult, callCommand(command))
+				sys.stderr.writelines(command)
+                last_echo = callCommand(command)
+                TestcaseResultDao().update(testcase.testcaseResult, last_echo)
                 
             TestcaseResultDao().update(testcase.testcaseResult, callCommand("adb -s %s uninstall %s" % (deviceInfo.serial, testcase.package)))
             
             testcase.testcaseResult.isEnd = 1
-            testcase.testcaseResult.isSuccess = 1
+            test_state = last_echo[-7:]
+            testcaseResult.run_time = test_state[1].strip().split(': ')[1]  ##获取执行时间
+            if test_state[3].split()[0]=="OK":  ##判定是否通过
+                testcaseResult.isSuccess = 1
+            else:
+                testcaseResult.isSuccess = 0
             TestcaseResultDao().update(testcase.testcaseResult)
         finally:
             DeviceManager().resetDevice(deviceInfo)
