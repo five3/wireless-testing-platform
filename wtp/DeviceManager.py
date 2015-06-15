@@ -99,7 +99,8 @@ class DeviceManager():
                     else:
                         tempUnavailableDeviceList.append(DeviceInfo(serial, False))
                 except Exception, e:
-                    print e
+                    import traceback
+                    print traceback.format_exc()
             
             self._deviceInfoList.available_device_list = tempAvailableDeviceList
             self._deviceInfoList.unavailable_device_list = tempUnavailableDeviceList
