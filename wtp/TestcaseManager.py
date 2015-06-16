@@ -17,11 +17,12 @@ from DeviceManager import DeviceManager
 from Singleton import singleton
 from TestcaseResultDao import TestcaseResultDao
 from ThreadPoolManager import ThreadPoolManager
-
+from Configuration import Configuration
 
 @singleton
 class TestcaseManager:
     def __init__(self):
+        self.times_to_reboot = int(Configuration().dicts['times_to_reboot'])
         self.queue = Queue.Queue()
         thread.start_new_thread(self._processOnBackground, ())
         
@@ -93,8 +94,13 @@ class TestcaseManager:
                 testcase.testcaseResult.isSuccess = 0
             TestcaseResultDao().update(testcase.testcaseResult)
         finally:
-            DeviceManager().resetDevice(deviceInfo)
-            
+            deviceInfo.run_times += 1
+            if deviceInfo.run_times%self.times_to_reboot==0:  ##达到指定次数则重启设备
+                callCommand("adb -s %s reboot"%deviceInfo.serial)
+                time.sleep(10)  ##等待重启
+            else:
+                DeviceManager().resetDevice(deviceInfo)
+
     def _replaceMacro(self, original, deviceInfo, testcase):
         original = original.replace("${SERIAL}", deviceInfo.serial)
         original = original.replace("${WORKSPACE}", testcase.testcasepath[0:testcase.testcasepath.rindex('/')])

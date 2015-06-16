@@ -8,4 +8,5 @@
 		<packageServer>/disk1/PackageServer</packageServer>
 		<testcaseServer>/disk1/CIS/shared</testcaseServer>
 	</testcase>
+	<times_to_reboot>10</times_to_reboot>
 </root>
