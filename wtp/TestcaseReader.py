@@ -17,8 +17,7 @@ class TestcaseReader:
     def __init__(self, apkpath, projectname):
         self.apkpath = apkpath
         self.projectname = projectname
-        self.uuid = '-'.join([self.projectname, str(uuid.uuid4())])
-        
+        self.uuid = '-'.join([self.projectname, str(uuid.uuid4())])        
         self.testcaseList = []
         
         self._load();
@@ -50,6 +49,10 @@ class TestcaseReader:
             raise Exception("no testcase found")
         
         package = dicts['package']
+        self.version = dicts['version'].replace('.', '')
+        self.init = self.splitCommandLine(dicts['init'])		
+        self.setup = self.splitCommandLine(dicts['setup']) if 'setup' in dicts else []		
+		
         if type(dicts['testcases']['testcase']) is dict:
             self.testcaseList.append(self._readTestcase(dicts['testcases']['testcase'], package))
         else:
@@ -70,6 +73,8 @@ class TestcaseReader:
             
         testcase.testcaseResult.testcaseName = testcase.name
         testcase.testcaseResult.parentUuid = self.uuid
+        testcase.version = self.version
+        testcase.init = self.init
             
         if type(testcaseDict['commands']['command']) is list:
             for command in testcaseDict['commands']['command']:
@@ -80,6 +85,7 @@ class TestcaseReader:
         if testcaseDict.has_key('condition') and testcaseDict['condition'].has_key('sim'):
             testcase.condition.sim = True if testcaseDict['condition']['sim'].lower() != 'false' else False
 
+        testcase.prepares.extend(self.setup)
         if 'prepares' in testcaseDict:
 			if type(testcaseDict['prepares']['prepare']) is list:
 				for prepare in testcaseDict['prepares']['prepare']:

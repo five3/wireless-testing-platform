@@ -63,16 +63,28 @@ class TestcaseManager:
         try:
             deviceInfo = args[0]['deviceInfo']
             testcase = args[0]['testcase']
-            testcase.testcaseResult.deviceInfo = json.dumps(deviceInfo.toDict())
-
+            testcase.testcaseResult.deviceInfo = json.dumps(deviceInfo.toDict())			
             TestcaseResultDao().insert(testcase.testcaseResult)
             
-            uninstallCommand = "adb -s %s uninstall %s" % (deviceInfo.serial, testcase.package)
-            TestcaseResultDao().update(testcase.testcaseResult, callCommand(uninstallCommand))
-            
-            installCommand = "adb -s %s install %s" % (deviceInfo.serial, testcase.apkpath)
-            TestcaseResultDao().update(testcase.testcaseResult, callCommand(installCommand))
-            
+			###-------------检查是否需要重新安装被测程序---------------------#
+            if (testcase.package not in deviceInfo.installed_apps) or \
+                (deviceInfo.installed_apps[testcase.package] != testcase.version):  ##未安装过##版本不一致则重新安装
+				
+				uninstallCommand = "adb -s %s uninstall %s" % (deviceInfo.serial, testcase.package) ##卸载软件
+				sys.stderr.writelines(uninstallCommand)
+				TestcaseResultDao().update(testcase.testcaseResult, callCommand(uninstallCommand))
+				
+				installCommand = "adb -s %s install %s" % (deviceInfo.serial, testcase.apkpath)
+				sys.stderr.writelines(installCommand)
+				TestcaseResultDao().update(testcase.testcaseResult, callCommand(installCommand))
+				deviceInfo.installed_apps[testcase.package] = testcase.version
+
+				##为新设备初始化测试环境
+				for init in testcase.init:
+				    init = self._replaceMacro(init, deviceInfo, testcase);
+				    sys.stderr.writelines(init)
+				    TestcaseResultDao().update(testcase.testcaseResult, ['【init info】:\r\n']+callCommand(init))
+				
             for prepare in testcase.prepares:
                 prepare = self._replaceMacro(prepare, deviceInfo, testcase);
                 TestcaseResultDao().update(testcase.testcaseResult, callCommand(prepare))
@@ -82,9 +94,7 @@ class TestcaseManager:
                 sys.stderr.writelines(command)
                 last_echo = callCommand(command)
                 TestcaseResultDao().update(testcase.testcaseResult, last_echo)
-                
-            TestcaseResultDao().update(testcase.testcaseResult, callCommand("adb -s %s uninstall %s" % (deviceInfo.serial, testcase.package)))
-            
+                            
             testcase.testcaseResult.isEnd = 1
             test_state = last_echo[-7:]
             testcase.testcaseResult.run_time = test_state[1].strip().split(': ')[1]  ##获取执行时间

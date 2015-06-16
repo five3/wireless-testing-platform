@@ -17,6 +17,7 @@ class DeviceInfo():
         self.serial = serial
         self.state = state
         self.first_install = True
+        self.installed_apps = {}
         self.run_times = 0
         if state:
             self.product = DeviceUtils.getProductBySerial(serial)
@@ -31,6 +32,7 @@ class DeviceInfo():
         device_info_dict['state'] = self.state	
         if self.state:
             device_info_dict['run_times'] = self.run_times	
+            device_info_dict['installed_apps'] = self.installed_apps
             device_info_dict['first_install'] = self.first_install
             device_info_dict['product'] = self.product
             device_info_dict['resolution'] = self.resolution

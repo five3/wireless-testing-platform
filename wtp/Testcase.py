@@ -20,4 +20,6 @@ class Testcase:
         self.package = package
         self.condition = condition
         self.testcaseResult = TestcaseResult()
+        self.init = []
+        self.version = 0
     
