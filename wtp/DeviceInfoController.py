@@ -11,11 +11,12 @@ import lazyxml
 import tornado.web
 
 from DeviceManager import DeviceManager
-
+from ThreadPoolManager import ThreadPoolManager
 
 class DeviceInfoController(tornado.web.RequestHandler):
     def get(self):
         dicts = DeviceManager().getDeviceInfoList().toDict()
+        dicts['threadNumber'] = ThreadPoolManager().threadNumber
 
         if self.get_argument('rel', None):
             api_type = self.get_argument('rel', 'xml')
