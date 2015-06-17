@@ -8,8 +8,8 @@ import json
 
 import tornado.web
 
-from TestcaseResult import TestcaseResult
-from TestcaseResultDao import TestcaseResultDao
+from models.TestcaseResult import TestcaseResult
+from models.TestcaseResultDao import TestcaseResultDao
 
 
 class TestcaseResultListController(tornado.web.RequestHandler):

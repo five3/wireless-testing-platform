@@ -5,7 +5,9 @@ Created on Jun 2, 2015
 @author: chenchen
 '''
 import tornado.web
-from TestcaseResultDao import TestcaseResultDao
+
+from models.TestcaseResultDao import TestcaseResultDao
+
 
 class TestcaseResultListHtmlController(tornado.web.RequestHandler):
     def get(self):

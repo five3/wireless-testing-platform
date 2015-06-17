@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+	<testcase>
+		<timeout>
+			<total>100000</total>
+			<single>100</single>		
+		</timeout>
+		<packageServer>E:/cis/package</packageServer>
+		<testcaseServer>E:/cis/testcase</testcaseServer>
+	</testcase>
+    <times_to_reboot>10</times_to_reboot>
+</root>

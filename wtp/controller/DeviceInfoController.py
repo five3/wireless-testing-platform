@@ -10,8 +10,8 @@ import json
 import lazyxml
 import tornado.web
 
-from DeviceManager import DeviceManager
-from ThreadPoolManager import ThreadPoolManager
+from manager.DeviceManager import DeviceManager
+from manager.ThreadPoolManager import ThreadPoolManager
 
 class DeviceInfoController(tornado.web.RequestHandler):
     def get(self):

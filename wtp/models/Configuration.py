@@ -8,7 +8,7 @@ import os
 
 import lazyxml
 
-from Singleton import singleton
+from utils.Singleton import singleton
 
 
 @singleton

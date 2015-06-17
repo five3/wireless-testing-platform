@@ -11,12 +11,13 @@ import thread
 from threading import Lock
 import time
 
-from CommonLib import callCommand, write
-from Condition import Condition
-from DeviceInfo import DeviceInfo
-from DeviceInfoList import DeviceInfoList
-from DeviceUtils import DeviceUtils
-from Singleton import singleton
+from models.Condition import Condition
+from models.DeviceInfo import DeviceInfo
+from models.DeviceInfoList import DeviceInfoList
+
+from utils.CommonLib import callCommand, write
+from utils.DeviceUtils import DeviceUtils
+from utils.Singleton import singleton
 
 
 @singleton
@@ -43,7 +44,7 @@ class DeviceManager():
                 return None
             
             aimed_index = None
-            ks = self._deviceInfoList.available_device_list.keys()  ##ÓĞĞ§Éè±¸Ä¿Â¼
+            ks = self._deviceInfoList.available_device_list.keys()  ##è·å–æœ‰æ•ˆè®¾å¤‡ç›®å½•
             if condition.sim:
                 ''' XXX loadbalance '''
                 for k in ks:
@@ -58,7 +59,7 @@ class DeviceManager():
             if not aimed_index:
                 return None
                 
-            self._deviceInfoList.available_device_list.pop(aimed_index)  ##´ÓÓĞĞ§Ä¿Â¼É¾³ı
+            self._deviceInfoList.available_device_list.pop(aimed_index)  ##ä»æœ‰æ•ˆè®¾å¤‡ç›®å½•åˆ é™¤
             deviceInfo = self._deviceInfoList.relDeviceList[aimed_index] 
             DeviceUtils.lockDevice(deviceInfo.serial)
             
@@ -74,10 +75,10 @@ class DeviceManager():
             self._lock.release()
     
     def refresh(self, isFirst=False):
-        temp_unavailable_device_list = {}  ##ÁÙÊ±ÎŞĞ§Éè±¸ÁĞ±í
+        temp_unavailable_device_list = {}  ##è®¾å¤‡ç›®å½• ä¸´æ—¶åˆ—è¡¨
         temp_processing_device_list = {}
         temp_available_device_list = {}
-        temp_available_serial_list = []  ##µ±Ç°ÓĞĞ§Á¬½ÓÉè±¸
+        temp_available_serial_list = []  ##å·²è¿æ¥è®¾å¤‡ åºåˆ—ç  åˆ—è¡¨
         
         try:
             self._lock.acquire()            
@@ -89,9 +90,9 @@ class DeviceManager():
                         continue
                     
                     serial = dvc_info.split()[0]
-                    if dvc_info.split()[1] == 'device':  ##ÓĞĞ§Éè±¸
+                    if dvc_info.split()[1] == 'device':  ##æœ‰æ•ˆè®¾å¤‡è¿æ¥
                         temp_available_serial_list.append(serial)
-                        if serial not in self._deviceInfoList.relDeviceList: ##Ê×´Î½ÓÈë½âËø²¢³õÊ¼»¯Éè±¸ĞÅÏ¢
+                        if serial not in self._deviceInfoList.relDeviceList: ##æ–°ä¾¦æµ‹åˆ°çš„è®¾å¤‡
                             DeviceUtils.unlockDevice(serial)
                             self._deviceInfoList.relDeviceList[serial] = DeviceInfo(serial)
                         
@@ -105,13 +106,13 @@ class DeviceManager():
                     import traceback
                     print traceback.format_exc()
 					
-            for k in self._deviceInfoList.relDeviceList.keys():  ##Çå³ıÒÆ³ıµÄÉè±¸
+            for k in self._deviceInfoList.relDeviceList.keys():  ##æ¸…é™¤è¢«ç§»å‡ºçš„è®¾å¤‡
                 if k not in temp_available_serial_list:
                     del self._deviceInfoList.relDeviceList[k]
 					
-            self._deviceInfoList.unavailable_device_list = temp_unavailable_device_list  ##ÖØÖÃÎŞĞ§Éè±¸ÁĞ±í
-            self._deviceInfoList.processing_device_list = temp_processing_device_list  ##ÖØÖÃÖ´ĞĞÉè±¸Ä¿Â¼
-            self._deviceInfoList.available_device_list = temp_available_device_list  ##ÖØÖÃ¿ÕÏĞÉè±¸Ä¿Â¼
+            self._deviceInfoList.unavailable_device_list = temp_unavailable_device_list
+            self._deviceInfoList.processing_device_list = temp_processing_device_list
+            self._deviceInfoList.available_device_list = temp_available_device_list
         finally:
             self._lock.release()
                  

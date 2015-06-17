@@ -6,7 +6,7 @@ Created on Jun 2, 2015
 '''
 import tornado.web
 
-from TestcaseResultDao import TestcaseResultDao
+from models.TestcaseResultDao import TestcaseResultDao
 
 
 class TestcaseResultController(tornado.web.RequestHandler):

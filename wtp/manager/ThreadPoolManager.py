@@ -7,8 +7,8 @@ Created on Dec 16, 2014
 
 import threadpool
 
-from DeviceManager import DeviceManager
-from Singleton import singleton
+from utils.Singleton import singleton
+from manager.DeviceManager import DeviceManager
 
 
 @singleton

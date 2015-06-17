@@ -13,17 +13,10 @@ from tornado.options import define, options
 import tornado.options
 import tornado.web
 
-from Configuration import Configuration
-from DeviceInfoController import DeviceInfoController
-from DeviceManager import DeviceManager
-from ProcessController import ProcessController
-from TestcaseResultController import TestcaseResultController
-from TestcaseResultHtmlController import TestcaseResultHtmlController
-from TestcaseResultListController import TestcaseResultListController
-from TestcaseResultListHtmlController import TestcaseResultListHtmlController
-from ThreadPoolManager import ThreadPoolManager
-from AboutController import AboutController
-from IndexController import IndexController
+from controller import *
+from models.Configuration import Configuration
+from manager.DeviceManager import DeviceManager
+from manager.ThreadPoolManager import ThreadPoolManager
 
 class TornadoProcessor:
     def __init__(self):

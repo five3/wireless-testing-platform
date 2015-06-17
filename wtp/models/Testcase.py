@@ -4,8 +4,8 @@ Created on May 25, 2015
 
 @author: chenchen
 '''
-from Condition import Condition
-from TestcaseResult import TestcaseResult
+from models.Condition import Condition
+from models.TestcaseResult import TestcaseResult
 
 
 class Testcase:

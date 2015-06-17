@@ -4,9 +4,12 @@ Created on Jun 2, 2015
 
 @author: chenchen
 '''
-import MySQLdb
 import sys
-from Singleton import singleton
+
+import MySQLdb
+
+from utils.Singleton import singleton
+
 
 class BaseDao:
     def __init__(self):

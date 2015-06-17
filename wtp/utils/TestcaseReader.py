@@ -9,8 +9,8 @@ import uuid
 
 import lazyxml
 
-from Configuration import Configuration
-from Testcase import Testcase
+from models.Configuration import Configuration
+from models.Testcase import Testcase
 
 
 class TestcaseReader:

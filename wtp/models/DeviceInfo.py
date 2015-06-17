@@ -4,7 +4,7 @@ Created on Jan 5, 2015
 @author: sqxu
 @author: chenchen
 """
-from DeviceUtils import DeviceUtils
+from utils.DeviceUtils import DeviceUtils
 
 
 class DeviceInfo():

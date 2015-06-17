@@ -10,14 +10,18 @@ import json
 import thread
 import time
 import sys
+
 from threadpool import makeRequests
 
-from CommonLib import callCommand
-from DeviceManager import DeviceManager
-from Singleton import singleton
-from TestcaseResultDao import TestcaseResultDao
-from ThreadPoolManager import ThreadPoolManager
-from Configuration import Configuration
+from utils.Singleton import singleton
+from utils.CommonLib import callCommand
+
+from manager.DeviceManager import DeviceManager
+from manager.ThreadPoolManager import ThreadPoolManager
+
+from models.TestcaseResultDao import TestcaseResultDao
+from models.Configuration import Configuration
+
 
 @singleton
 class TestcaseManager:

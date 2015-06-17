@@ -8,9 +8,9 @@ import os
 
 import tornado.web
 
-from Configuration import Configuration
-from TestcaseManager import TestcaseManager
-from TestcaseReader import TestcaseReader
+from models.Configuration import Configuration
+from manager.TestcaseManager import TestcaseManager
+from utils.TestcaseReader import TestcaseReader
 
 
 class ProcessController(tornado.web.RequestHandler):

@@ -5,10 +5,9 @@ Created on May 21, 2015
 @author: chenchen
 '''
 import os
-
-from CommonLib import callCommand
-
 import platform
+
+from utils.CommonLib import callCommand
 
 class DeviceUtils:
     processlock = '/sdcard/processlock.pid'

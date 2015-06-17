@@ -1,0 +1,10 @@
+__author__ = 'xwchen2'
+
+from IndexController import IndexController
+from DeviceInfoController import DeviceInfoController
+from ProcessController import ProcessController
+from TestcaseResultController import TestcaseResultController
+from TestcaseResultHtmlController import TestcaseResultHtmlController
+from TestcaseResultListController import TestcaseResultListController
+from TestcaseResultListHtmlController import TestcaseResultListHtmlController
+from AboutController import AboutController
