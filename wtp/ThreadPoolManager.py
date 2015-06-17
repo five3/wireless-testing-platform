@@ -26,4 +26,6 @@ class ThreadPoolManager:
     ''' 
     def __init__(self):
         self.threadNumber = len(DeviceManager().getDeviceInfoList().available_device_list) * 2
+        if not self.threadNumber:
+            self.threadNumber = 5   ##默认开启5个线程
         self.threadPool = threadpool.ThreadPool(self.threadNumber)
