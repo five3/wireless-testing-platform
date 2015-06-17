@@ -62,7 +62,7 @@ class TestcaseResultDao(BaseDao):
 
     def retrieveAllInOneJob(self, parentUuid):
         cursor = self.getCursor()
-        sql = "SELECT result, device_info, isSuccess, testcase_name FROM testcase_result WHERE parent_uuid = %s AND isEnd = 1"
+        sql = "SELECT uuid, testcase_name, isEnd, isSuccess, run_time, result, device_info, parent_uuid FROM testcase_result WHERE parent_uuid = %s"
         cursor.execute(sql, (parentUuid,))
         return cursor.fetchall()
 		
