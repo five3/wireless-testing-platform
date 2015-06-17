@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block main %}
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1>WTP - wireless-testing-platform</h1>
+        <p>description for wireless-testing-platform</p>
+      </div>
+
+    <form method="get" action="/process" target="_blank">
+      <div class="form-group">
+        <label for="apkpath">APK Path</label>
+        <input type="text" class="form-control" name="apkpath" id="apkpath" placeholder="Enter APK Path" value="lingxi_v3.1.2005.autotest_signed.apk">
+      </div>
+      <div class="form-group">
+        <label for="projectname">Project Name</label>
+        <input type="text" class="form-control" name="projectname" id="projectname" placeholder="Project Name">
+      </div>
+
+      <button type="submit" class="btn btn-success">提交</button>
+    </form>
+{% end %}

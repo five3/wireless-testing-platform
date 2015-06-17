@@ -28,5 +28,8 @@ class ProcessController(tornado.web.RequestHandler):
         ''' 4. 循环读取命令，在线程池中运行 '''
         for testcase in testcaseReader.testcaseList:
             TestcaseManager().process(testcase)
-            
-        self.write({'success': True, 'uuid': testcaseReader.uuid})
+
+        if not self.get_argument('rel', None):
+            self.render('process.html', uuid=testcaseReader.uuid)
+        else:
+            self.write({'success': True, 'uuid': testcaseReader.uuid})

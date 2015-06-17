@@ -16,7 +16,7 @@ class TestcaseResultController(tornado.web.RequestHandler):
         name = self.get_argument('name')
         line = int(self.get_argument('line', 0))
         
-        if not name:
+        if not name and not uuid:
             raise Exception
         
         if uuid:
@@ -31,6 +31,6 @@ class TestcaseResultController(tornado.web.RequestHandler):
             if results[0]:
                 lines = results[0].splitlines()
                 if len(lines) > line:
-                    result = '<br />'.join(lines[line + 1:])
+                    result = '<br />'.join(lines[line:])
     
             self.write({"successful": True, "result": result, "isEnd": results[1], "isSuccess": results[2], "line": len(lines)})        

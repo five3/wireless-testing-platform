@@ -27,11 +27,14 @@ class TestcaseResultListController(tornado.web.RequestHandler):
             testcaseResultListDict = {'testcase_result_list' : []}
             for resultset in resultsets:
                 testcaseResult = TestcaseResult()
-                testcaseResult.result = '<br />'.join(resultset[0].splitlines())
-                testcaseResult.deviceInfo = resultset[1]
-                testcaseResult.isSuccess = resultset[2]
-                testcaseResult.testcaseName = resultset[3]
-                
+                testcaseResult.uuid = resultset[0]
+                testcaseResult.testcaseName = resultset[1]
+                testcaseResult.isEnd = resultset[2]
+                testcaseResult.isSuccess = resultset[3]
+                testcaseResult.run_time = resultset[4]
+                testcaseResult.result = '<br />'.join(resultset[5].splitlines())
+                testcaseResult.deviceInfo = resultset[6]
+                testcaseResult.parentUuid = resultset[7]
                 testcaseResultListDict['testcase_result_list'].append(testcaseResult.toDict())
 
             self.write({"successful": True, 'testcaseResultArray': json.dumps(testcaseResultListDict,  indent=4)})        

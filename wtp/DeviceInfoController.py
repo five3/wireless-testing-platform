@@ -16,20 +16,25 @@ from DeviceManager import DeviceManager
 class DeviceInfoController(tornado.web.RequestHandler):
     def get(self):
         dicts = DeviceManager().getDeviceInfoList().toDict()
-        
-        api_type = self.get_argument('api', 'xml')
-        pretty = self.get_argument('pretty', 'true').lower() == 'true'
-        if api_type == 'json':
-            if pretty:
-                devices_info = json.dumps(dicts, indent=4)
+
+        if self.get_argument('rel', None):
+            api_type = self.get_argument('rel', 'xml')
+            pretty = self.get_argument('pretty', 'true').lower() == 'true'
+            if api_type == 'json':
+                if pretty:
+                    devices_info = json.dumps(dicts, indent=4)
+                else:
+                    devices_info = json.dumps(dicts)
+            elif api_type == 'xml':
+                if pretty:
+                    devices_info = lazyxml.dumps(dicts, root='device_list', cdata=False, indent='    ')
+                else:
+                    devices_info = lazyxml.dumps(dicts, root='device_list', cdata=False)
             else:
-                devices_info = json.dumps(dicts)
-        elif api_type == 'xml':
+                raise Exception('unsupported argument: ' + api_type)
             if pretty:
-                devices_info = lazyxml.dumps(dicts, root='device_list', cdata=False, indent='    ')
+                self.render('msg.html', msg=devices_info)
             else:
-                devices_info = lazyxml.dumps(dicts, root='device_list', cdata=False)
+                self.write(devices_info)
         else:
-            raise Exception('unsupported argument: ' + api_type) 
-        
-        self.render('index.html', result_text=devices_info)
+            self.render('devices.html', info=dicts)

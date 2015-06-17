@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h1>连接设备数：{{ info['device_list_count'] }}，
+    空闲设备数：{{ len(info['available_device_list']) }}，
+    执行设备数：{{ len(info['processing_device_list']) }}，
+    无效设备数：{{ len(info['unavailable_device_list']) }}</h1>
+<hr>
+
+<h1>空闲设备列表</h1><hr>
+{% for i in info['available_device_list'] %}
+    <h2>设备：{{i['product']}}</h2>
+    <ul>
+        <li><label>设备号【serial】:</label><span>{{i['serial']}}</span></li>
+        <li><label>设备名【product】:</label><span>{{i['product']}}</span></li>
+        <li><label>分辨率【resolution】:</label><span>{{i['resolution']}}</span></li>
+        <li><label>设备版本【edition】:</label><span>{{i['edition']}}</span></li>
+        <li><label>内存大小【memory_size】:</label><span>{{i['memory_size']}}</span></li>
+        <li><label>可用内存【memory_free】:</label><span>{{i['memory_free']}}</span></li>
+        <li><label>设备状态【state】:</label><span>{{i['state']}}</span></li>
+        <li><label>SIM卡状态【sim_state】:</label><span>{{i['sim_state']}}</span></li>
+        <li><label>已安装的app【installed_apps】:</label>
+            {% for k,v in i['installed_apps'].items() %}
+                <ul>
+                    <li><label>app包名【package】:</label>{{ k }}</li>
+                    <li><label>app版本【version】:</label>{{ v }}</li>
+                </ul>
+            {% end %}
+        </li>
+        <li><label>运行用例次数【run_times】:</label><span>{{i['run_times']}}</span></li>
+    </ul>
+{% end %}
+<h1>执行设备列表</h1><hr>
+{% for i in info['processing_device_list'] %}
+    <h2>设备：{{i['product']}}</h2>
+    <ul>
+        <li><label>设备号【serial】:</label><span>{{i['serial']}}</span></li>
+        <li><label>设备名【product】:</label><span>{{i['product']}}</span></li>
+        <li><label>分辨率【resolution】:</label><span>{{i['resolution']}}</span></li>
+        <li><label>设备版本【edition】:</label><span>{{i['edition']}}</span></li>
+        <li><label>内存大小【memory_size】:</label><span>{{i['memory_size']}}</span></li>
+        <li><label>可用内存【memory_free】:</label><span>{{i['memory_free']}}</span></li>
+        <li><label>设备状态【state】:</label><span>{{i['state']}}</span></li>
+        <li><label>SIM卡状态【sim_state】:</label><span>{{i['sim_state']}}</span></li>
+        <li><label>已安装的app【installed_apps】:</label>
+            {% for k,v in i['installed_apps'].items() %}
+                <ul>
+                    <li><label>app包名【package】:</label>{{ k }}</li>
+                    <li><label>app版本【version】:</label>{{ v }}</li>
+                </ul>
+            {% end %}
+        </li>
+        <li><label>运行用例次数【run_times】:</label><span>{{i['run_times']}}</span></li>
+    </ul>
+{% end %}
+<h1>无效设备列表</h1><hr>
+{% for i in info['unavailable_device_list'] %}
+    <ul>
+        <li><label>设备号【serial】:</label><span>{{i.serial}}</span></li>
+        <li><label>设备状态【state】:</label><span>{{i.state}}</span></li>
+    </ul>
+{% end %}
+
+{% end %}

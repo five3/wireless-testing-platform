@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h1>测试执行状态</h1><hr>
+<ul>
+    <li>是否已执行: 是</li>
+    <li>测试集合ID: {{uuid}}</li>
+    <li><a target="_blank" href="/resultListHtml?uuid={{uuid}}">查看测试结果</a></li>
+    <li><a target="_blank" href="/devices">查看设备列表</a></li>
+</ul>
+
+{% end %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h1>测试用例结果</h1><hr>
+<div id="result_area"></div>
+
+{% end %}
+
+{% block footer_ext %}
+    <script>
+        line = 0
+        var thisInterval;
+        $(function(){
+            getResult()
+            thisInterval = setInterval(function(){
+                getResult()
+            }, 5000)
+        })
+
+        function getResult(){
+            $.ajax({
+                url: 'result',
+                dataType: 'json',
+                data: {
+                    name: '{{name}}',
+                    uuid: '{{uuid}}',
+                    line: line
+                },
+                success: function(data){
+                    var r = ""
+                    line = data.line;
+                    if (data.result!=""){
+                        r = "<br/>"+data.result
+                    }
+                    $("#result_area").append(r);
+                    if(data.isEnd){
+                        clearInterval(thisInterval);
+                    }
+                }
+            })
+        }
+    </script>
+{% end %}

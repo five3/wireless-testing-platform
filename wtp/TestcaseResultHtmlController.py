@@ -9,5 +9,9 @@ import tornado.web
 
 class TestcaseResultHtmlController(tornado.web.RequestHandler):
     def get(self):
-        self.render('result.html', name=self.get_argument('name'), uuid=self.get_argument('uuid', ''))
-        
+        name=self.get_argument('name','')
+        uuid=self.get_argument('uuid', '')
+        if name:
+            self.render('result.html', name=name, uuid=uuid)
+        else:
+            self.render('viewResult.html')
