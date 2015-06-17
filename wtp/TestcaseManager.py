@@ -72,11 +72,11 @@ class TestcaseManager:
 				
 				uninstallCommand = "adb -s %s uninstall %s" % (deviceInfo.serial, testcase.package) ##卸载软件
 				sys.stderr.writelines(uninstallCommand)
-				TestcaseResultDao().update(testcase.testcaseResult, callCommand(uninstallCommand))
+				TestcaseResultDao().update(testcase.testcaseResult, ['【uninstall apk】:\r\n']+callCommand(uninstallCommand))
 				
 				installCommand = "adb -s %s install %s" % (deviceInfo.serial, testcase.apkpath)
 				sys.stderr.writelines(installCommand)
-				TestcaseResultDao().update(testcase.testcaseResult, callCommand(installCommand))
+				TestcaseResultDao().update(testcase.testcaseResult, ['【install apk】:\r\n']+callCommand(installCommand))
 				deviceInfo.installed_apps[testcase.package] = testcase.version
 
 				##为新设备初始化测试环境
@@ -87,18 +87,21 @@ class TestcaseManager:
 				
             for prepare in testcase.prepares:
                 prepare = self._replaceMacro(prepare, deviceInfo, testcase);
-                TestcaseResultDao().update(testcase.testcaseResult, callCommand(prepare))
+                TestcaseResultDao().update(testcase.testcaseResult, ['【prepare info】:\r\n']+callCommand(prepare))
                 
             for command in testcase.commands:
                 command = self._replaceMacro(command, deviceInfo, testcase);
                 sys.stderr.writelines(command)
                 last_echo = callCommand(command)
-                TestcaseResultDao().update(testcase.testcaseResult, last_echo)
+                TestcaseResultDao().update(testcase.testcaseResult, ['【command info】:\r\n']+last_echo)
                             
             testcase.testcaseResult.isEnd = 1
-            test_state = last_echo[-7:]
-            testcase.testcaseResult.run_time = test_state[1].strip().split(': ')[1]  ##获取执行时间
-            if test_state[3].split()[0]=="OK":  ##判定是否通过
+            test_state = last_echo[-6:]
+            print test_state
+            if 'Time' not in test_state[0]: ##成功日志
+                del test_state[0]
+            testcase.testcaseResult.run_time = test_state[0].strip().split(': ')[1]  ##获取执行时间
+            if test_state[2].split()[0]=="OK":  ##判定是否通过
                 testcase.testcaseResult.isSuccess = 1
             else:
                 testcase.testcaseResult.isSuccess = 0
