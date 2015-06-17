@@ -22,7 +22,8 @@ from TestcaseResultHtmlController import TestcaseResultHtmlController
 from TestcaseResultListController import TestcaseResultListController
 from TestcaseResultListHtmlController import TestcaseResultListHtmlController
 from ThreadPoolManager import ThreadPoolManager
-
+from AboutController import AboutController
+from IndexController import IndexController
 
 class TornadoProcessor:
     def __init__(self):
@@ -31,20 +32,23 @@ class TornadoProcessor:
         ThreadPoolManager()
 
         define('port', 80, None, int)
+        define("debug", default=True, help="Debug Mode", type=bool)
 
     def run(self):
-        settings = {'static_path': os.path.join(os.path.dirname(__file__), '')}
-        
+        template_path = os.path.join(os.path.dirname(__file__), "templates")
+        static_path = os.path.join(os.path.dirname(__file__), "static")
+        settings = {'static_path': static_path,
+                    'template_path' : template_path,
+                    }
         tornado.options.parse_command_line()
-        application = tornado.web.Application(handlers=[(r'/(favicon\.png)', tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
-                                                        (r'/(jquery-1\.10\.2\.min\.js)', tornado.web.StaticFileHandler, dict(path=settings['static_path'])),
-                                                        (r'/', DeviceInfoController),
+        application = tornado.web.Application(handlers=[(r'/', IndexController),
                                                         (r'/devices', DeviceInfoController),
                                                         (r'/process', ProcessController),
                                                         (r'/result', TestcaseResultController),
                                                         (r'/resultList', TestcaseResultListController),
                                                         (r'/resultHtml', TestcaseResultHtmlController),
-                                                        (r'/resultListHtml', TestcaseResultListHtmlController)
+                                                        (r'/resultListHtml', TestcaseResultListHtmlController),
+                                                        (r'/about', AboutController)
                                                         ], **settings)
         http_server = tornado.httpserver.HTTPServer(application)
         http_server.listen(options.port)
