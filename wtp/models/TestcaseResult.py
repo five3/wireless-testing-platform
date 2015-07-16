@@ -10,10 +10,10 @@ import uuid
 class TestcaseResult:
     def __init__(self):
         self.deviceInfo = None
-        self.parentUuid = None
+        self.parentUuid = ''
         self.uuid = str(uuid.uuid4())
         self.testcaseName = None
-        self.result = ''
+        self.result = u''
         self.isEnd = 0
         self.isSuccess = 0
         self.run_time = 0

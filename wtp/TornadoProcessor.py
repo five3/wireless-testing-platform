@@ -12,7 +12,6 @@ import tornado.ioloop
 from tornado.options import define, options
 import tornado.options
 import tornado.web
-
 from controller import *
 from models.Configuration import Configuration
 from manager.DeviceManager import DeviceManager
@@ -36,6 +35,7 @@ class TornadoProcessor:
         tornado.options.parse_command_line()
         application = tornado.web.Application(handlers=[(r'/', IndexController),
                                                         (r'/devices', DeviceInfoController),
+                                                        (r'/queue', QueueController),
                                                         (r'/process', ProcessController),
                                                         (r'/result', TestcaseResultController),
                                                         (r'/resultList', TestcaseResultListController),

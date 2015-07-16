@@ -5,7 +5,6 @@ Created on Jun 2, 2015
 @author: chenchen
 '''
 import tornado.web
-
 from models.TestcaseResultDao import TestcaseResultDao
 
 

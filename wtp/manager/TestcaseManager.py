@@ -62,7 +62,7 @@ class TestcaseManager:
     ''' 增加工作请求，将请求加入到工作队列中 '''
     def process(self, testcase):
         self.queue.put(testcase)
-        
+
     def _runTestcase(self, *args, **kwds):
         try:
             deviceInfo = args[0]['deviceInfo']
@@ -75,40 +75,40 @@ class TestcaseManager:
                 (deviceInfo.installed_apps[testcase.package] != testcase.version):  ##未安装过##版本不一致则重新安装
 				
 				uninstallCommand = "adb -s %s uninstall %s" % (deviceInfo.serial, testcase.package) ##卸载软件
-				sys.stderr.writelines(uninstallCommand)
-				TestcaseResultDao().update(testcase.testcaseResult, ['【uninstall apk】:\r\n']+callCommand(uninstallCommand))
+				sys.stderr.writelines(uninstallCommand+'\r\n')
+				TestcaseResultDao().update(testcase.testcaseResult, [u'【uninstall apk】:%s\r\n' % uninstallCommand]+callCommand(uninstallCommand))
 				
 				installCommand = "adb -s %s install %s" % (deviceInfo.serial, testcase.apkpath)
-				sys.stderr.writelines(installCommand)
-				TestcaseResultDao().update(testcase.testcaseResult, ['【install apk】:\r\n']+callCommand(installCommand))
+				sys.stderr.writelines(installCommand+'\r\n')
+				TestcaseResultDao().update(testcase.testcaseResult, [u'【install apk】:%s\r\n' % installCommand]+callCommand(installCommand))
 				deviceInfo.installed_apps[testcase.package] = testcase.version
 
 				##为新设备初始化测试环境
 				for init in testcase.init:
-				    init = self._replaceMacro(init, deviceInfo, testcase);
-				    sys.stderr.writelines(init)
-				    TestcaseResultDao().update(testcase.testcaseResult, ['【init info】:\r\n']+callCommand(init))
+				    init = self._replaceMacro(init, deviceInfo, testcase)
+				    sys.stderr.writelines(init+'\r\n')
+				    TestcaseResultDao().update(testcase.testcaseResult, [u'【init info】:%s\r\n' % init]+callCommand(init))
 				
             for prepare in testcase.prepares:
-                prepare = self._replaceMacro(prepare, deviceInfo, testcase);
-                TestcaseResultDao().update(testcase.testcaseResult, ['【prepare info】:\r\n']+callCommand(prepare))
+                prepare = self._replaceMacro(prepare, deviceInfo, testcase)
+                sys.stderr.writelines(prepare+'\r\n')
+                TestcaseResultDao().update(testcase.testcaseResult, [u'【prepare info】:%s\r\n' % prepare]+callCommand(prepare))
                 
             for command in testcase.commands:
-                command = self._replaceMacro(command, deviceInfo, testcase);
-                sys.stderr.writelines(command)
+                command = self._replaceMacro(command, deviceInfo, testcase)
+                sys.stderr.writelines(command+'\r\n')
                 last_echo = callCommand(command)
-                TestcaseResultDao().update(testcase.testcaseResult, ['【command info】:\r\n']+last_echo)
+                TestcaseResultDao().update(testcase.testcaseResult, [u'【command info】:%s\r\n' % command]+last_echo)
                             
             testcase.testcaseResult.isEnd = 1
             test_state = last_echo[-6:]
-            print test_state
-            if 'Time' not in test_state[0]: ##成功日志
-                del test_state[0]
-            testcase.testcaseResult.run_time = test_state[0].strip().split(': ')[1]  ##获取执行时间
-            if test_state[2].split()[0]=="OK":  ##判定是否通过
-                testcase.testcaseResult.isSuccess = 1
-            else:
-                testcase.testcaseResult.isSuccess = 0
+            for i in test_state:
+                if 'Time' in i:
+                    testcase.testcaseResult.run_time = test_state[0].strip().split(': ')[1]  ##获取执行时间
+                elif 'FAILURES' in i:
+                    testcase.testcaseResult.isSuccess = 0
+                elif 'OK' in i:
+                    testcase.testcaseResult.isSuccess = 1
             TestcaseResultDao().update(testcase.testcaseResult)
         finally:
             deviceInfo.run_times += 1
@@ -123,3 +123,32 @@ class TestcaseManager:
         original = original.replace("${WORKSPACE}", testcase.testcasepath[0:testcase.testcasepath.rindex('/')])
         
         return original
+
+    def get_size(self):
+        return  self.queue.qsize()
+
+    def empty(self):
+        while not self.queue.empty():
+            self.queue.get()
+
+    def remove_by_parent_uuid(self, uuid):
+        dump_list = []
+        while not self.queue.empty():
+            dump_list.append(self.queue.get())
+        [self.queue.put(i) for i in dump_list if i.parent_uuid!=uuid]
+
+    def remove_by_uuid(self, uuid):
+        dump_list = []
+        while not self.queue.empty():
+            dump_list.append(self.queue.get())
+        [self.queue.put(i) for i in dump_list if i.uuid!=uuid]
+
+    def get_dump_list(self):
+        dump_list = []
+        case_list = []
+        while not self.queue.empty():
+            testcase = self.queue.get()
+            dump_list.append([testcase.name, testcase.description, testcase.uuid, testcase.parent_uuid])
+            case_list.append(testcase)
+        [self.queue.put(i) for i in case_list]
+        return dump_list

@@ -17,29 +17,19 @@ class TestcaseReader:
     def __init__(self, apkpath, projectname):
         self.apkpath = apkpath
         self.projectname = projectname
-        self.uuid = '-'.join([self.projectname, str(uuid.uuid4())])        
+        self.uuid = str(uuid.uuid4())
         self.testcaseList = []
         
         self._load();
         
     ''' 确定测试用例文件路径 '''
     def _getTestcasePath(self):
-        tempPath = self.projectname.replace("-", "/")
-
-        while True:
-            testcasePath = "%s/%s/testcase.xml" % (Configuration().dicts['testcase']['testcaseServer'], tempPath)
-            exist = os.path.isfile(testcasePath)
-            if exist:
-                return testcasePath
-            
-            if (tempPath.find('/') == -1 and tempPath.find('_') == -1) or not tempPath:
-                raise Exception
-            if tempPath.find('_') != -1:
-                tempPath = tempPath[:tempPath.rindex('_')]
-            else:
-                tempPath = tempPath[:tempPath.rindex('/')]
-
-        raise Exception
+        testcasePath = "%s/%s/testcase.xml" % (Configuration().dicts['testcase']['testcaseServer'], self.projectname)
+        # print testcasePath
+        if os.path.isfile(testcasePath):
+            return testcasePath
+        else:
+            raise Exception('testcase file not exist!')
     
     def _load(self):
         xml = open(self._getTestcasePath()).read()
@@ -75,6 +65,8 @@ class TestcaseReader:
         testcase.testcaseResult.parentUuid = self.uuid
         testcase.version = self.version
         testcase.init = self.init
+        testcase.parent_uuid = self.uuid
+        testcase.uuid = testcase.testcaseResult.uuid
             
         if type(testcaseDict['commands']['command']) is list:
             for command in testcaseDict['commands']['command']:

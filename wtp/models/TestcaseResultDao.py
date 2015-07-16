@@ -52,8 +52,8 @@ class TestcaseResultDao(BaseDao):
             self.conn.rollback()
         
     def update(self, testcaseResult, resultList=[]):
-        for result in resultList:
-            testcaseResult.result += result
+        # print resultList
+        testcaseResult.result += ''.join(resultList)
         
         cursor = self.getCursor()
         try:
@@ -71,7 +71,7 @@ class TestcaseResultDao(BaseDao):
 		
     def retrieveLastOne(self, testcaseName):
         cursor = self.getCursor()
-        sql = "SELECT result, isEnd, isSuccess FROM testcase_result WHERE testcase_name = %s ORDER BY ID DESC LIMIT 1"
+        sql = "SELECT result, isEnd, isSuccess, parent_uuid FROM testcase_result WHERE testcase_name = %s ORDER BY ID DESC LIMIT 1"
         cursor.execute(sql, (testcaseName,))
         return cursor.fetchone()
 

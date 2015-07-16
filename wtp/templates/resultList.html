@@ -8,7 +8,7 @@
         {% for r in results %}
             <tr><td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td><td>{{ r[3] }}</td><td>{{ r[4] }}</td>
                 <td><a target="_blank" href="/resultHtml?name={{r[1]}}&uuid={{ r[0] }}">查看详情</a>&nbsp;&nbsp;&nbsp;
-                <a target="_blank" href="/reRun?result_id={{ r[0] }}&run_log_id={{ r[5] }}">重跑</a></td></tr>
+                <a target="_blank" href="/reRun?result_id={{ r[0] }}&run_log_id={{ r[5] }}" style="display:none;">重跑</a></td></tr>
         {% end %}
     </tbody>
 </table>

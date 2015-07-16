@@ -8,3 +8,4 @@ from TestcaseResultHtmlController import TestcaseResultHtmlController
 from TestcaseResultListController import TestcaseResultListController
 from TestcaseResultListHtmlController import TestcaseResultListHtmlController
 from AboutController import AboutController
+from QueueController import QueueController

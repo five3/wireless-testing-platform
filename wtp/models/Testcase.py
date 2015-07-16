@@ -22,4 +22,7 @@ class Testcase:
         self.testcaseResult = TestcaseResult()
         self.init = []
         self.version = 0
+        self.uuid = '0'
+        self.parent_uuid = '0'
+
     
