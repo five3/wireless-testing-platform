@@ -6,6 +6,9 @@ Created on May 15, 2015
 '''
 from TornadoProcessor import TornadoProcessor
 
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class Main:
     def __init__(self):

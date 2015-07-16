@@ -11,7 +11,7 @@ import lazyxml
 
 from models.Configuration import Configuration
 from models.Testcase import Testcase
-
+from models.TestcaseResultDao import TestcaseNumDao
 
 class TestcaseReader:
     def __init__(self, apkpath, projectname):
@@ -20,7 +20,8 @@ class TestcaseReader:
         self.uuid = str(uuid.uuid4())
         self.testcaseList = []
         
-        self._load();
+        self._load()
+
         
     ''' 确定测试用例文件路径 '''
     def _getTestcasePath(self):
@@ -48,6 +49,8 @@ class TestcaseReader:
         else:
             for testcaseDict in dicts['testcases']['testcase']:
                 self.testcaseList.append(self._readTestcase(testcaseDict, package))
+
+        TestcaseNumDao().insert(self.uuid, len(self.testcaseList))
                 
     def _readTestcase(self, testcaseDict, package):
         if (not testcaseDict.has_key('name')) and (not testcaseDict.has_key('description')):
@@ -63,6 +66,7 @@ class TestcaseReader:
             
         testcase.testcaseResult.testcaseName = testcase.name
         testcase.testcaseResult.parentUuid = self.uuid
+        testcase.testcaseResult.memo = testcase.description
         testcase.version = self.version
         testcase.init = self.init
         testcase.parent_uuid = self.uuid

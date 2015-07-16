@@ -17,6 +17,7 @@ class TestcaseResult:
         self.isEnd = 0
         self.isSuccess = 0
         self.run_time = 0
+        self.memo = u''
         
     def toDict(self):
         testcase_result_dict = {}
@@ -28,4 +29,5 @@ class TestcaseResult:
         testcase_result_dict['isEnd'] = self.isEnd
         testcase_result_dict['isSuccess'] = self.isSuccess
         testcase_result_dict['run_time'] = self.run_time
+        testcase_result_dict['memo'] = self.memo
         return testcase_result_dict

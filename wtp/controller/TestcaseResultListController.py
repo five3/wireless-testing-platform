@@ -22,13 +22,13 @@ class TestcaseResultListController(tornado.web.RequestHandler):
         
         resultsets = TestcaseResultDao().retrieveAllInOneJob(uuid)
         if not resultsets:
-            self.write({"successful": False})
+            self.write({"successful": False, 'msg':'no result found'})
         else:
             testcaseResultListDict = {'testcase_result_list' : []}
             for resultset in resultsets:
                 testcaseResult = TestcaseResult()
-                testcaseResult.uuid = resultset[0]
-                testcaseResult.testcaseName = resultset[1]
+                testcaseResult.testcaseName = resultset[0]
+                testcaseResult.memo = resultset[1]
                 testcaseResult.isEnd = resultset[2]
                 testcaseResult.isSuccess = resultset[3]
                 testcaseResult.run_time = resultset[4]

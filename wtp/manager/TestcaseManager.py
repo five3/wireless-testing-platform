@@ -101,10 +101,11 @@ class TestcaseManager:
                 TestcaseResultDao().update(testcase.testcaseResult, [u'【command info】:%s\r\n' % command]+last_echo)
                             
             testcase.testcaseResult.isEnd = 1
-            test_state = last_echo[-6:]
+            test_state = last_echo[-10:]
+            # print test_state
             for i in test_state:
                 if 'Time' in i:
-                    testcase.testcaseResult.run_time = test_state[0].strip().split(': ')[1]  ##获取执行时间
+                    testcase.testcaseResult.run_time = i.strip().split(': ')[1]  ##获取执行时间
                 elif 'FAILURES' in i:
                     testcase.testcaseResult.isSuccess = 0
                 elif 'OK' in i:

@@ -18,10 +18,9 @@ class BaseDao:
 
     def connect(self):
         self.conn = MySQLdb.connect(
-                # host='172.16.95.14', root:root
-                host='127.0.0.1',
+                host='172.16.95.14',
                 user='root',
-                passwd='changeit!',
+                passwd='root',
                 db='jenkins',
                 port=3306,
                 charset='utf8'
@@ -38,6 +37,28 @@ class BaseDao:
         return self.conn.cursor()
 
 @singleton
+class TestcaseNumDao(BaseDao):
+    def __init__(self):
+        BaseDao.__init__(self)
+
+    def insert(self, parent_uuid, num):
+        cursor = self.getCursor()
+        try:
+            sql = '''insert into testcase_num (parent_uuid, num) values (%s, %s)'''
+            cursor.execute(sql, (parent_uuid, num))
+            self.conn.commit()
+        except Exception, e:
+            sys.stderr.write(str(e))
+            self.conn.rollback()
+
+    def get_num(self, parent_uuid):
+        cursor = self.getCursor()
+        sql = '''select num from testcase_num where parent_uuid=%s'''
+        cursor.execute(sql, (parent_uuid, ))
+        return cursor.fetchone()
+
+
+@singleton
 class TestcaseResultDao(BaseDao):
     def __init__(self):
         BaseDao.__init__(self)
@@ -45,15 +66,19 @@ class TestcaseResultDao(BaseDao):
     def insert(self, testcaseResult):
         cursor = self.getCursor()
         try:
-            sql = "INSERT INTO testcase_result(testcase_name, uuid, parent_uuid, device_info) VALUES (%s, %s, %s, %s)"
-            cursor.execute(sql, (testcaseResult.testcaseName, testcaseResult.uuid, testcaseResult.parentUuid, testcaseResult.deviceInfo))
+            sql = "INSERT INTO testcase_result(testcase_name, memo, uuid, parent_uuid, device_info) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(sql, (testcaseResult.testcaseName, testcaseResult.memo, testcaseResult.uuid, testcaseResult.parentUuid, testcaseResult.deviceInfo))
         except Exception, e:
             sys.stderr.write(str(e))
             self.conn.rollback()
         
     def update(self, testcaseResult, resultList=[]):
-        # print resultList
-        testcaseResult.result += ''.join(resultList)
+        try:
+            testcaseResult.result += ''.join(resultList)
+        except:
+            for i in resultList:
+                print type(i), i, unicode(i)
+            raise Exception('编码错误')
         
         cursor = self.getCursor()
         try:
@@ -65,7 +90,7 @@ class TestcaseResultDao(BaseDao):
 
     def retrieveAllInOneJob(self, parentUuid):
         cursor = self.getCursor()
-        sql = "SELECT uuid, testcase_name, isEnd, isSuccess, run_time, result, device_info, parent_uuid FROM testcase_result WHERE parent_uuid = %s"
+        sql = "SELECT testcase_name, memo, isEnd, isSuccess, run_time, result, device_info, parent_uuid FROM testcase_result WHERE parent_uuid = %s"
         cursor.execute(sql, (parentUuid,))
         return cursor.fetchall()
 		
