@@ -5,8 +5,8 @@
 			<total>100000</total>
 			<single>100</single>		
 		</timeout>
-		<packageServer>/disk1/PackageServer</packageServer>
-		<testcaseServer>/disk1/CIS/shared</testcaseServer>
+		<packageServer>E:\cis\package</packageServer>
+		<testcaseServer>E:\cis\testcase</testcaseServer>
 	</testcase>
-    <times_to_reboot>10</times_to_reboot>
+    <times_to_reboot>50</times_to_reboot>
 </root>

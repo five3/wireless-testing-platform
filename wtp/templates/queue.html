@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block main %}
+
+<h1>测试用例队列（{{info['queue_size']}}）</h1><hr>
+<p><button onclick="empty_queue();" class="btn btn-success">清空队列</button></p>
+<table class="table table-hover">
+    <tbody>
+        <tr><th>用例名</th><th>用例描述</th><th>UUID</th><th>Parent_UUID</th><th>操作</th></tr>
+        {% for i in info['queue_list'] %}
+            <tr><td>{{ i[0] }}</td><td>{{ i[1] }}</td><td>{{ i[2] }}</td><td>{{ i[3] }}</td>
+                <td><a href="javascript:void(0);" onclick="remove_from_queue('{{i[2]}}')">移除任务</a></td>
+            </tr>
+        {% end %}
+    </tbody>
+</table>
+{% end %}
+
+{% block footer_ext %}
+    <script>
+        function empty_queue(){
+            $.post("/queue",{action: 'empty'}, function(result){
+                if (result.errorCode==0){
+                    alert('清空成功');
+                    location.reload();
+                };
+            });
+        }
+        function remove_from_queue(uuid){
+            $.post("/queue",{action: 'remove', uuid: uuid}, function(result){
+                if (result.errorCode==0){
+                    alert('移除成功');
+                    location.reload();
+                };
+            });
+        }
+    </script>
+{% end %}
