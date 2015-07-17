@@ -57,8 +57,8 @@
 <h1>无效设备列表</h1><hr>
 {% for i in info['unavailable_device_list'] %}
     <ul>
-        <li><label>设备号【serial】:</label><span>{{i.serial}}</span></li>
-        <li><label>设备状态【state】:</label><span>{{i.state}}</span></li>
+        <li><label>设备号【serial】:</label><span>{{i['serial']}}</span></li>
+        <li><label>设备状态【state】:</label><span>{{i['state']}}</span></li>
     </ul>
 {% end %}
 

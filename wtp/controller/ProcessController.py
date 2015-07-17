@@ -9,13 +9,17 @@ import os
 import tornado.web
 
 from models.Configuration import Configuration
-from manager.TestcaseManager import TestcaseManager
+from manager.TestcaseManager import TestcaseManager, DeviceManager
 from utils.TestcaseReader import TestcaseReader
 
 
 class ProcessController(tornado.web.RequestHandler):
     ''' 执行测试用例 '''
     def get(self):
+        devices_list = DeviceManager().getDeviceInfoList().relDeviceList
+        if len(devices_list)<=0:
+            return self.write({'success': False, 'msg': 'no devices connected'})
+
         ''' 1. 确定交付包位置 '''
         apkpath = "%s/%s" % (Configuration().dicts['testcase']['packageServer'], self.get_argument('apkpath'))
         # print apkpath
