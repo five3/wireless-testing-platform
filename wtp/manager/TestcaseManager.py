@@ -53,11 +53,12 @@ class TestcaseManager:
                 req_list.append({'deviceInfo':deviceInfo, 'testcase':testcase})
 
             if not req_list:
+                time.sleep(1)
                 continue
 
             requests = makeRequests(self._runTestcase, req_list)
             [ThreadPoolManager().threadPool.putRequest(req) for req in requests]
-            ThreadPoolManager().threadPool.wait()
+            # ThreadPoolManager().threadPool.wait()
     
     ''' 增加工作请求，将请求加入到工作队列中 '''
     def process(self, testcase):
@@ -67,7 +68,8 @@ class TestcaseManager:
         try:
             deviceInfo = args[0]['deviceInfo']
             testcase = args[0]['testcase']
-            testcase.testcaseResult.deviceInfo = json.dumps(deviceInfo.toDict())			
+            testcase.testcaseResult.deviceInfo = json.dumps(deviceInfo.toDict())
+            testcase.testcaseResult.deviceName = deviceInfo.product
             TestcaseResultDao().insert(testcase.testcaseResult)
             
 			###-------------检查是否需要重新安装被测程序---------------------#

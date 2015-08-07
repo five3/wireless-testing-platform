@@ -12,6 +12,7 @@ import lazyxml
 from models.Configuration import Configuration
 from models.Testcase import Testcase
 from models.TestcaseResultDao import TestcaseNumDao
+from models.Condition import Condition
 
 class TestcaseReader:
     def __init__(self, apkpath, projectname):
@@ -78,8 +79,13 @@ class TestcaseReader:
         else:
             testcase.commands.extend(self.splitCommandLine(testcaseDict['commands']['command']))
             
-        if testcaseDict.has_key('condition') and testcaseDict['condition'].has_key('sim'):
-            testcase.condition.sim = True if testcaseDict['condition']['sim'].lower() != 'false' else False
+        if testcaseDict.has_key('condition'):
+            condition = Condition()
+            if testcaseDict['condition'].has_key('sim'):
+                condition.sim = True if testcaseDict['condition']['sim'].lower()=='true' else False
+            if testcaseDict['condition'].has_key('resolution'):
+                condition.resolution = testcaseDict['condition']['resolution'].strip()
+            testcase.condition = condition
 
         testcase.prepares.extend(self.setup)
         if 'prepares' in testcaseDict:

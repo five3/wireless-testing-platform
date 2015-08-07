@@ -66,8 +66,8 @@ class TestcaseResultDao(BaseDao):
     def insert(self, testcaseResult):
         cursor = self.getCursor()
         try:
-            sql = "INSERT INTO testcase_result(testcase_name, memo, uuid, parent_uuid, device_info) VALUES (%s, %s, %s, %s, %s)"
-            cursor.execute(sql, (testcaseResult.testcaseName, testcaseResult.memo, testcaseResult.uuid, testcaseResult.parentUuid, testcaseResult.deviceInfo))
+            sql = "INSERT INTO testcase_result(testcase_name, memo, uuid, parent_uuid, device_info, device_name) VALUES (%s, %s, %s, %s, %s, %s)"
+            cursor.execute(sql, (testcaseResult.testcaseName, testcaseResult.memo, testcaseResult.uuid, testcaseResult.parentUuid, testcaseResult.deviceInfo, testcaseResult.deviceName))
         except Exception, e:
             sys.stderr.write(str(e))
             self.conn.rollback()
@@ -90,7 +90,7 @@ class TestcaseResultDao(BaseDao):
 
     def retrieveAllInOneJob(self, parentUuid):
         cursor = self.getCursor()
-        sql = "SELECT testcase_name, memo, isEnd, isSuccess, run_time, result, device_info, parent_uuid FROM testcase_result WHERE parent_uuid = %s"
+        sql = "SELECT testcase_name, memo, device_name, isEnd, isSuccess, run_time, result, device_info, parent_uuid, id FROM testcase_result WHERE parent_uuid = %s"
         cursor.execute(sql, (parentUuid,))
         return cursor.fetchall()
 		
@@ -104,4 +104,10 @@ class TestcaseResultDao(BaseDao):
         cursor = self.getCursor()
         sql = "SELECT result, isEnd, isSuccess FROM testcase_result WHERE testcase_name = %s AND uuid = %s LIMIT 1"
         cursor.execute(sql, (testcaseName, uuid))
+        return cursor.fetchone()
+
+    def get_device_info(self, caseid):
+        cursor = self.getCursor()
+        sql = "SELECT device_info FROM testcase_result WHERE id=%s LIMIT 1"
+        cursor.execute(sql, (caseid, ))
         return cursor.fetchone()

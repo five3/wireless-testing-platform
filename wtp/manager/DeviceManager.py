@@ -35,7 +35,7 @@ class DeviceManager():
     def getDeviceInfoList(self):
         return self._deviceInfoList
     
-    def shiftDevice(self, condition=Condition()):
+    def shiftDevice(self, condition=None):
         try:
             self._lock.acquire()
         
@@ -45,13 +45,17 @@ class DeviceManager():
             
             aimed_index = None
             ks = self._deviceInfoList.available_device_list.keys()  ##获取有效设备目录
-            if condition.sim:
-                ''' XXX loadbalance '''
+            if condition:
                 for k in ks:
                     available_device = self._deviceInfoList.relDeviceList[k]
-                    if available_device.sim_state == condition.sim:
-                        aimed_index = k
-                        break
+                    if condition.sim: ##有sim卡条件过滤
+                        if available_device.sim_state!=condition.sim:
+                            continue
+                    if condition.resolution: ##有分辨率条件过滤
+                        if available_device.resolution!=condition.resolution:
+                            continue
+                    aimed_index = k
+                    break
             else:
                 i = random.randint(0, available_device_len - 1)
                 aimed_index = ks[i]

@@ -51,11 +51,22 @@ class DeviceUtils:
     @staticmethod
     def getSimStateBySerial(serial):
         if platform.system()=='Windows':
-            service_state = callCommand('adb -s %s shell dumpsys telephony.registry | find "mServiceState"' % serial)[0].strip().split()[0].split('=')[1]
+            service_state = callCommand('adb -s %s shell dumpsys telephony.registry | find "mServiceState"' % serial)[0].strip()
         else:
-            service_state = callCommand('adb -s %s shell dumpsys telephony.registry | grep mServiceState' % serial)[0].strip().split()[0].split('=')[1]
+            service_state = callCommand('adb -s %s shell dumpsys telephony.registry | grep mServiceState' % serial)[0].strip()
         try:
-            return int(service_state)==1
+            tl = service_state.split('home')
+            if len(tl)>1:
+                tm = tl[1].strip().split()
+                if len(tm)<5:
+                    return False
+                else:
+                    if tm[0]!='null' and tm[1]!='null':
+                        return True
+                    else:
+                        return False
+            else:
+                return False
         except:
             return False
     

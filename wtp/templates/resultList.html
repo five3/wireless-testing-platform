@@ -4,11 +4,13 @@
 <h1>测试集执行结果({{num}}/{{total}})</h1>
 <table class="table table-hover">
     <tbody>
-        <tr><th>用例名</th><th>用例描述</th><th>是否结束</th><th>是否成功</th><th>执行时间</th><th>操作</th></tr>
+        <tr><th>用例名</th><th>用例描述</th><th>设备名称</th><th>是否结束</th><th>是否成功</th><th>执行时间</th><th>操作</th></tr>
         {% for r in results %}
-            <tr><td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td><td>{{ r[3] }}</td><td>{{ r[4] }}</td>
-                <td><a target="_blank" href="/resultHtml?name={{ r[0] }}">查看详情</a>&nbsp;&nbsp;&nbsp;
-                <a target="_blank" href="/reRun?result_id={{ r[0] }}&run_log_id={{ r[5] }}" style="display:none;">重跑</a></td></tr>
+            <tr>
+                <td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td><td>{{ r[3] }}</td><td>{{ r[4] }}</td><td>{{ r[5] }}</td>
+                <td><a target="_blank" href="/resultHtml?name={{r[0]}}">结果详情</a>&nbsp;&nbsp;&nbsp;
+                    <a target="_blank" href="/devices?caseid={{r[9]}}">设备详情</a></td>
+            </tr>
         {% end %}
     </tbody>
 </table>
